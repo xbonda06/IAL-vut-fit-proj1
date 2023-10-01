@@ -54,7 +54,18 @@ bool solved;
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpressionLength ) {
-	solved = false; /* V případě řešení, smažte tento řádek! */
+    if(Stack_IsEmpty(stack)) return;
+    char tmp;
+    while (stack->topIndex != -1){
+        Stack_Top(stack, &tmp);
+        Stack_Pop(stack);
+        if(tmp == ')'){
+            Stack_Pop(stack);
+            break;
+        }
+        postfixExpression[*postfixExpressionLength] = tmp;
+        (*postfixExpressionLength)++;
+    }
 }
 
 /**
@@ -74,7 +85,50 @@ void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpre
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postfixExpressionLength ) {
-	solved = false; /* V případě řešení, smažte tento řádek! */
+	int priorityC = 0;
+    int priorityTop = 0;
+    switch(c){
+        case '+':
+            priorityC = 1;
+            break;
+        case '-':
+            priorityC = 1;
+            break;
+        case '*':
+            priorityC = 2;
+            break;
+        case '/':
+            priorityC = 2;
+            break;
+    }
+    char tmp;
+    Stack_Top(stack, &tmp);
+    Stack_Pop(stack);
+    switch(tmp){
+        case '+':
+            priorityTop = 1;
+            break;
+        case '-':
+            priorityTop = 1;
+            break;
+        case '*':
+            priorityTop = 2;
+            break;
+        case '/':
+            priorityTop = 2;
+            break;
+    }
+    if(priorityC > priorityTop){
+        postfixExpression[*postfixExpressionLength] = c;
+        (*postfixExpressionLength)++;
+        postfixExpression[*postfixExpressionLength] = tmp;
+        (*postfixExpressionLength)++;
+    } else {
+        postfixExpression[*postfixExpressionLength] = tmp;
+        (*postfixExpressionLength)++;
+        postfixExpression[*postfixExpressionLength] = c;
+        (*postfixExpressionLength)++;
+    }
 }
 
 /**
