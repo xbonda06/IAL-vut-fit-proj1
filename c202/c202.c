@@ -72,7 +72,12 @@ void Stack_Error( int error_code ) {
  * @param stack Ukazatel na strukturu zásobníku
  */
 void Stack_Init( Stack *stack ) {
-	solved = false; /* V případě řešení, smažte tento řádek! */
+    if ( stack == NULL ) {
+        Stack_Error(SERR_INIT);
+    } else {
+        stack->array = NULL;
+        stack->topIndex = -1;
+    }
 }
 
 /**
