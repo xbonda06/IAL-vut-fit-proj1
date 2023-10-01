@@ -78,7 +78,6 @@ void Stack_Init( Stack *stack ) {
         stack->array = (char*)malloc(STACK_SIZE * sizeof(char));
         if (stack->array == NULL) {
             Stack_Error(SERR_INIT);
-            return;
         }
         stack->topIndex = -1;
     }
