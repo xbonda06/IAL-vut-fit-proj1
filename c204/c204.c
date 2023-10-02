@@ -58,11 +58,14 @@ void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpre
     while (!Stack_IsEmpty(stack)){
         Stack_Top(stack, &topChar);
         Stack_Pop(stack);
+        postfixExpression[(*postfixExpressionLength)++] = topChar;
+
         if(topChar == '('){
             Stack_Pop(stack);
             break;
         }
-        postfixExpression[(*postfixExpressionLength)++] = topChar;
+
+        Stack_Pop(stack);
 
     }
 }
@@ -239,7 +242,17 @@ char *infix2postfix(const char *infixExpression) {
  * @param value hodnota k vložení na zásobník
  */
 void expr_value_push( Stack *stack, int value ) {
-	solved = false; /* V případě řešení, smažte tento řádek! */
+	unsigned char byte1, byte2, byte3, byte4;
+
+    byte1 = (unsigned char)(value & 0xFF);
+    byte2 = (unsigned char)((value >> 8) & 0xFF);
+    byte3 = (unsigned char)((value >> 16) & 0xFF);
+    byte4 = (unsigned char)((value >> 24) & 0xFF);
+
+    Stack_Push(stack, byte4);
+    Stack_Push(stack, byte3);
+    Stack_Push(stack, byte2);
+    Stack_Push(stack, byte1);
 }
 
 /**
@@ -255,8 +268,17 @@ void expr_value_push( Stack *stack, int value ) {
  *   výsledné celočíselné hodnoty z vrcholu zásobníku
  */
 void expr_value_pop( Stack *stack, int *value ) {
-	solved = false; /* V případě řešení, smažte tento řádek! */
-	*value = 0;
+    *value = 0;
+    char byte;
+    int getValue;
+
+    for (int i = 3; i >= 0; i--) {
+        Stack_Top(stack, &byte);
+        Stack_Pop(stack);
+
+        getValue = (int)(byte & 0xFF);
+        *value += getValue << (i * 8);
+    }
 }
 
 
