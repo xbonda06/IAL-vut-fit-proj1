@@ -54,17 +54,16 @@ bool solved;
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpressionLength ) {
-    if(Stack_IsEmpty(stack)) return;
-    char tmp;
-    while (stack->topIndex != -1){
-        Stack_Top(stack, &tmp);
+    char topChar;
+    while (!Stack_IsEmpty(stack)){
+        Stack_Top(stack, &topChar);
         Stack_Pop(stack);
-        if(tmp == ')'){
+        if(tmp == '('){
             Stack_Pop(stack);
             break;
         }
-        postfixExpression[*postfixExpressionLength] = tmp;
-        (*postfixExpressionLength)++;
+        postfixExpression[(*postfixExpressionLength)++] = tmp;
+
     }
 }
 
@@ -85,49 +84,45 @@ void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpre
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postfixExpressionLength ) {
+    char topChar;
+    if(!Stack_IsEmpty(stack)){
+        Stack_Top(stack);
+    } else {
+        Stack_Push(stack, c);
+        return;
+    }
+
 	int priorityC = 0;
     int priorityTop = 0;
     switch(c){
         case '+':
-            priorityC = 1;
-            break;
         case '-':
             priorityC = 1;
             break;
         case '*':
-            priorityC = 2;
-            break;
         case '/':
             priorityC = 2;
             break;
     }
-    char tmp;
-    Stack_Top(stack, &tmp);
-    Stack_Pop(stack);
-    switch(tmp){
+
+    switch(topChar){
         case '+':
-            priorityTop = 1;
-            break;
         case '-':
             priorityTop = 1;
             break;
         case '*':
-            priorityTop = 2;
-            break;
         case '/':
             priorityTop = 2;
             break;
     }
-    if(priorityC > priorityTop){
-        postfixExpression[*postfixExpressionLength] = c;
-        (*postfixExpressionLength)++;
-        postfixExpression[*postfixExpressionLength] = tmp;
-        (*postfixExpressionLength)++;
+
+    if(priorityC > priorityTop || tmp == '('){
+        Stack_Push(stack, tmp);
+        return;
     } else {
-        postfixExpression[*postfixExpressionLength] = tmp;
-        (*postfixExpressionLength)++;
-        postfixExpression[*postfixExpressionLength] = c;
-        (*postfixExpressionLength)++;
+        postfixExpression[(*postfixExpressionLength)++] = tmp;
+        Stack_Pop(stack);
+        doOperation(stack, c, postfixExpression, postfixExpressionLength);
     }
 }
 
@@ -180,8 +175,52 @@ void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postf
  * @returns znakový řetězec obsahující výsledný postfixový výraz
  */
 char *infix2postfix( const char *infixExpression ) {
-	solved = false; /* V případě řešení, smažte tento řádek! */
-	return NULL;
+    char *postfixExpression = malloc(MAX_LEN*sizeof(char));
+    if(postfixExpression == NULL) return NULL;
+
+    Stack *stack = malloc(sizeof(Stack));
+    if(stack == NULL){
+        free(postfixExpression);
+        return NULL;
+    }
+
+    Stack_Init(stack);
+    unsigned postfixExpressionLength = 0;
+
+
+    for(char c = *infixExpression; c != '\0'; c = ++*(infixExpression)){
+        switch (c) {
+            case '(':
+                Stack_Push(stack, c);
+                break;
+            case'+':
+            case'-':
+            case'*':
+            case'/':
+                doOperation(stack, c, postfixExpression, &postfixExpressionLength);
+                break;
+            case ')':
+                untilLeftPar(stack, postfixExpression, &postfixExpressionLength);
+                break;
+            case'=':
+                while(!Stack_IsEmpty(stack)){
+                    Stack_Top(stack, &postfixExpression[postfixExpressionLength++]);
+                    Stack_Pop(stack);
+                }
+                postfixExpression[postfixExpressionLength++] = '=';
+                break;
+            default:
+                if((c >= '0' && c <= '9') ||
+                   (c >= 'a' && c <= 'z') ||
+                   (c >= 'A' && c <= 'Z')) {
+                   postfixExpression[postfixExpressionLength++] = c;
+                }
+                break;
+        }
+        postfixExpression[postfixExpressionLength++] = '\0';
+        free(stack);
+        return postfixExpression;
+    }
 }
 
 
