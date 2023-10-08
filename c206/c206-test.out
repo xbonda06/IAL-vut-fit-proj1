@@ -208,18 +208,18 @@ List elements  : 1
 First element  : 1
 Last element   : 1
 Active element : not initialised (no item is active)
-List elements  : 1 2
+List elements  : 1
 First element  : 1
 Last element   : 2
 Active element : 1
-List elements  : 1 2 3
+List elements  : 1
 First element  : 1
 Last element   : 3
 Active element : 2
-List elements  : 1 2 3 4
+List elements  : 1
 First element  : 1
-Last element   : 4
-Active element : 3
+Last element   : 3
+Active element : not initialised (no item is active)
 
 
 [test_insert_before] Vložení několika prvků po před aktivní prvek
@@ -235,10 +235,10 @@ List elements  : 2 3 4
 First element  : 2
 Last element   : 4
 Active element : 3
-List elements  : 1 2 3 4
-First element  : 1
+List elements  : 2 3 4
+First element  : 2
 Last element   : 4
-Active element : 2
+Active element : not initialised (no item is active)
 
 
 [test_delete_first] Zrušení prvního prvku v seznamu
