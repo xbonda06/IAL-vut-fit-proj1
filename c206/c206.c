@@ -94,9 +94,9 @@ void DLL_Init( DLList *list ) {
 void DLL_Dispose( DLList *list ) {
     list->activeElement = list->firstElement;
     while(list->activeElement != NULL){
+        DLLElementPtr tmp = list->activeElement;
         list->activeElement = list->activeElement->nextElement;
-        free(list->firstElement);
-        list->firstElement = list->activeElement;
+        free(tmp);
     }
 
     list->firstElement = NULL;
