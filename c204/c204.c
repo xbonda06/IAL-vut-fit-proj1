@@ -54,13 +54,13 @@ bool solved;
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpressionLength ) {
-    char topChar;
+    char topChar; // temporary variable for charracter on top of stack
     while (!Stack_IsEmpty(stack)){
-        Stack_Top(stack, &topChar);
-        Stack_Pop(stack);
-        postfixExpression[(*postfixExpressionLength)++] = topChar;
+        Stack_Top(stack, &topChar); // get top char
+        Stack_Pop(stack); // remove top char
+        postfixExpression[(*postfixExpressionLength)++] = topChar; // add top char to postfix expression
 
-        if(topChar == '('){
+        if(topChar == '('){ // if top char is left parenthesis, break
             Stack_Pop(stack);
             break;
         }
@@ -87,16 +87,19 @@ void untilLeftPar( Stack *stack, char *postfixExpression, unsigned *postfixExpre
  * @param postfixExpressionLength Ukazatel na aktuální délku výsledného postfixového výrazu
  */
 void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postfixExpressionLength ) {
-    char topChar;
+    char topChar; // temporary variable for charracter on top of stack
     if(!Stack_IsEmpty(stack)){
         Stack_Top(stack, &topChar);
     } else {
-        Stack_Push(stack, c);
+        Stack_Push(stack, c); // if stack is empty, push the operator on the top of stack
         return;
     }
 
+    // variables for priority of operators
     int priorityC = 0;
     int priorityTop = 0;
+
+    // set priority of operator c
     switch(c){
         case '+':
         case '-':
@@ -108,6 +111,7 @@ void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postf
             break;
     }
 
+    // set priority of operator on top of stack
     switch(topChar){
         case '+':
         case '-':
@@ -119,6 +123,7 @@ void doOperation( Stack *stack, char c, char *postfixExpression, unsigned *postf
             break;
     }
 
+    // if priority of operator c is higher than priority of operator on top of stack, push operator c on the top of stack
     while (!Stack_IsEmpty(stack) && (priorityC <= priorityTop) && topChar != '(') {
         Stack_Top(stack, &topChar);
         Stack_Pop(stack);
